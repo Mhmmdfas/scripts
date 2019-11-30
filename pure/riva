@@ -5,24 +5,6 @@
 # Continues Integration
 #
 
-echo "#########################################"
-echo "### GREENFORCE Kernel - GCC 4.9.x Build Script ###"
-echo "#########################################"
-
-echo "L"
- echo "E"
-  echo "T"
-   echo "'"
-    echo "S"
-     echo " "
-      echo "S"
-       echo "T"
-        echo "A"
-         echo "R"
-          echo "T"
-           echo " "
-            echo "I"
-             echo "T"
 
 #Main Environment
 NUM=$(echo $CIRCLE_BUILD_NUM | cut -c 1-2)

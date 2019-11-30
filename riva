@@ -30,17 +30,17 @@ EXTRA="--depth=1"
 
 #Material's of GREENFORCE kernel
 ZIPLINK="https://github.com/Mhmmdfas/anykernel3"
-CLANGLINK="https://github.com/AyraHikari/DragonTC"
-GCC64="https://github.com/baalajimaestro/aarch64-maestro-linux-android"
-GCC32="https://github.com/baalajimaestro/arm-maestro-linux-gnueabi"
+CLANGLINK="https://github.com/BijiOnta/DragonTC"
+GCC64="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9"
+GCC32="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9"
 HEAD_CLANG="master"
-HEAD_GCC64="220919-9.2.1"
-HEAD_GCC32="20102019"
+HEAD_GCC64="android-9.0.0_r50"
+HEAD_GCC32="android-9.0.0_r50"
 
 #Prefixx Toolchains
 TC_CLANG="clang"
-TC_GCC64="aarch64-maestro-linux-gnu-"
-TC_GCC32="arm-maestro-linux-gnueabi-"
+TC_GCC64="aarch64-linux-android-"
+TC_GCC32="arm-linux-androideabi-"
 
 #Clone The Material's
 git clone ${JOBS} ${CLANGLINK} -b ${HEAD_CLANG} ${EXTRA} ${FCLANG}
