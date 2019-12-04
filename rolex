@@ -36,8 +36,8 @@ CLANGLINK="https://github.com/BijiOnta/DragonTC"
 GCC64="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9"
 GCC32="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9"
 HEAD_CLANG="master"
-HEAD_GCC64="android-9.0.0_r50"
-HEAD_GCC32="android-9.0.0_r50"
+HEAD_GCC64="android-9.0.0_r51"
+HEAD_GCC32="android-9.0.0_r51"
 
 #Prefixx Toolchains
 TC_CLANG="clang"
