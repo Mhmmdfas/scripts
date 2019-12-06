@@ -30,8 +30,8 @@ EXTRA="--depth=1"
 ZIPLINK="https://github.com/Mhmmdfas/anykernel3"
 GCC64="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9"
 GCC32="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9"
-HEAD_GCC64="android-9.0.0_r50"
-HEAD_GCC32="android-9.0.0_r50"
+HEAD_GCC64="android-9.0.0_r51"
+HEAD_GCC32="android-9.0.0_r51"
 
 #Prefixx Toolchains
 TC_GCC64="aarch64-linux-android-"
@@ -50,7 +50,8 @@ GCC_32="$(pwd)/${FARM}/bin/${TC_GCC32}"
 #Export Side
 DEV_ID="784548477"
 export ARCH=arm64
-export KBUILD_BUILD_USER=Mhmmdfas
+export KBUILD_BUILD_USER=Mhmmdfadlyas
+export KBUILD_BUILD_HOST=Greenforce-EAS
 export USE_CCACHE=1
 export CACHE_DIR=~/.ccache
 START=$(date +"%s")
