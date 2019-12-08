@@ -38,7 +38,6 @@ TC_GCC64="aarch64-linux-android-"
 TC_GCC32="arm-linux-androideabi-"
 
 #Clone The Material's
-git clone ${JOBS} ${CLANGLINK} -b ${HEAD_CLANG} ${EXTRA} ${FCLANG}
 git clone ${JOBS} ${GCC64} -b ${HEAD_GCC64} ${EXTRA} ${FGCC}
 git clone ${JOBS} ${GCC32} -b ${HEAD_GCC32} ${EXTRA} ${FARM}
 git clone ${JOBS} ${ZIPLINK} -b ${CODENAME} ${EXTRA} ${ZIPNAME}
