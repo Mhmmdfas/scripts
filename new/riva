@@ -1,4 +1,7 @@
 #!bin/bash
+# who is to blame?
+DEV="https://t.me/Mhmmdfas"
+ID="784548477"
 # Copyright (C) 2019 Ahmad Thoriq Najahi (@najahiiii)
 # Copyright (C) 2019 Muhammad Fadlyas! (@Mhmmdfas)
 # 
@@ -17,8 +20,12 @@
 # Telegram Environment
 TELEGRAM_ID=${chat_id)
 TELEGRAM_TOKEN=${token)
-DEV="https://t.me/Mhmmdfas"
-ID="784548477"
+
+# Clone Dependencies
+git clone ${JOBS} https://github.com/Nicklas373/aosp-clang -b r370808 ${EXTRA} ${DIR_CLANG}
+git clone ${JOBS} https://github.com/fadlyas07/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu ${EXTRA} ${DIR_GCC}
+git clone ${JOBS} https://github.com/fadlyas07/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabi ${EXTRA} ${DIR_GCC32}
+git clone ${JOBS} https://github.com/Mhmmdfas/anykernel3 -b ${CODENAME} ${EXTRA} ${ZIP_DIR}
 
 # Main Environment
 KERNEL_NAME="GREENFORCE"
@@ -37,12 +44,6 @@ ZIP_DIR="anykernel3"
 DIR_CLANG="clang"
 DIR_GCC="aarch64"
 DIR_GCC32="arm32"
-
-# Clone Dependencies
-git clone ${JOBS} https://github.com/Nicklas373/aosp-clang -b r370808 ${EXTRA} ${DIR_CLANG}
-git clone ${JOBS} https://github.com/fadlyas07/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu ${EXTRA} ${DIR_GCC}
-git clone ${JOBS} https://github.com/fadlyas07/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabi ${EXTRA} ${DIR_GCC32}
-git clone ${JOBS} https://github.com/Mhmmdfas/anykernel3 -b ${CODENAME} ${EXTRA} ${ZIP_DIR}
 
 # Export
 export ARCH=arm64
@@ -106,7 +107,7 @@ function finerr() {
             -d chat_id=${ID} \
 			-d "disable_web_page_preview=true" \
             -d "parse_mode=markdown" \
-            -d text="BUILD DONE WITH ERROR (S).%0A📱: Xiaomi Redmi 4A %0A🖇️: ${ERROR_LOG}"
+            -d text="BUILD DONE WITH ERROR(S).%0A📱: Xiaomi Redmi 4A %0A🖇️: ${ERROR_LOG}"
         exit 1
 }
 # Compile kernel
