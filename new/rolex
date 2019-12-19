@@ -1,9 +1,4 @@
 #!bin/bash
-# Copyright (C) 2019 Muhammad Fadlyas! (@Mhmmdfas)
-# For Xiaomi Redmi 4A & Xiaomi Redmi 5A
-# Circle CI/CD Scripts
-# Continues Integration
-#
 
 #Main Environment
 NUM=$(echo $CIRCLE_BUILD_NUM | cut -c 1-2)
@@ -16,7 +11,8 @@ CODENAME="rolex"
 CONFIG="rolex_defconfig"
 TYPE="CAF"
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-COMMIT="$(git log --pretty=format:'"%h : %s"' -1)"
+# Credits to @Nicklas373
+COMMIT="$$(git --no-pager log --pretty=format:'"%h - %s (%an)"' -1)"
 
 #Toolchains Option
 ZIPDIR="anykernel3"
@@ -126,6 +122,7 @@ function finerr() {
         exit 1
 }
 # Compile kernel
+# Credits to @Nicklas373
 function compile() {
         make -s -C $(pwd) O=out ${CONFIG}
         make -s -C $(pwd) CC=${CT} \
@@ -133,6 +130,8 @@ function compile() {
                           CROSS_COMPILE_ARM32=${GCC_32} \
                           O=out ${JOBS} ${LOAD} 2>&1| tee build.log
         UTS=$(cat out/include/generated/compile.h | grep UTS_VERSION | cut -d '"' -f2)
+	NAME=$(cat ${KERNEL}/out/include/generated/compile.h | grep LINUX_COMPILE_BY | cut -d '"' -f2)
+	HOST=$(cat ${KERNEL}/out/include/generated/compile.h | grep LINUX_COMPILE_HOST | cut -d '"' -f2)
             if ! [ -a $IMAGE ]; then
                 finerr
                 exit 1

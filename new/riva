@@ -1,9 +1,4 @@
 #!bin/bash
-# Copyright (C) 2019 Muhammad Fadlyas! (@Mhmmdfas)
-# For Xiaomi Redmi 4A & Xiaomi Redmi 5A
-# Circle CI/CD Scripts
-# Continues Integration
-#
 
 START=$(date +"%s")
 
@@ -17,7 +12,8 @@ NAME="GREENFORCE"
 CODENAME="riva"
 CONFIG="riva_defconfig"
 TYPE="CAF"
-COMMIT="$(git log --pretty=format:'"%h : %s"' -1)"
+#Credits to @Nicklas373
+COMMIT="$(git --no-pager log --pretty=format:'"%h - %s (%an)"' -1)"
 
 #Toolchains Option
 ZIPDIR="anykernel3"
@@ -92,7 +88,7 @@ function testprivv() {
 			-F chat_id=${DEV_ID} \
 			-F "disable_web_page_preview=true" \
 			-F "parse_mode=html" \
-			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). <b>For Xiaomi Redmi 5A</b> [ <code>$UTS</code> ]"
+			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). <b>For Xiaomi Redmi 5A</b> [ <code>$UTS</code> ] $NAME@$HOST"
 }
 # Fin Error
 function finerr() {
@@ -112,12 +108,15 @@ function finerr() {
         exit 1
 }
 # Compile kernel
+# Credits to @Nicklas373
 function compile() {
         make -s -C $(pwd) O=out ${CONFIG}
         make -s -C $(pwd) CC=${CT} \
-			                             CROSS_COMPILE=${GCC_64} \
-                                         CROSS_COMPILE_ARM32=${GCC_32} \
-                                         O=out ${JOBS} ${LOAD} 2>&1| tee build.log
+			  CROSS_COMPILE=${GCC_64} \
+                          CROSS_COMPILE_ARM32=${GCC_32} \
+                          O=out ${JOBS} ${LOAD} 2>&1| tee build.log
+	HOST=$(cat ${KERNEL}/out/include/generated/compile.h | grep LINUX_COMPILE_HOST | cut -d '"' -f2)
+	NAME=$(cat ${KERNEL}/out/include/generated/compile.h | grep LINUX_COMPILE_BY | cut -d '"' -f2)
         UTS=$(cat out/include/generated/compile.h | grep UTS_VERSION | cut -d '"' -f2)
             if ! [ -a $IMAGE ]; then
                 finerr
