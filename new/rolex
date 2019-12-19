@@ -1,157 +1,151 @@
-#!bin/ bash
-# who is to blame?
-DEV="https://t.me/Mhmmdfas"
-ID="784548477"
-# Copyright (C) 2019 Ahmad Thoriq Najahi (@najahiiii)
+#!bin/bash
 # Copyright (C) 2019 Muhammad Fadlyas! (@Mhmmdfas)
-# 
-# Template by @najahiiii
-#
-# This software is licensed under the terms of the GNU General Public
-# License version 2, as published by the Free Software Foundation, and
-# may be copied, distributed, and modified under those terms.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# For Xiaomi Redmi 4A & Xiaomi Redmi 5A
+# Circle CI/CD Scripts
+# Continues Integration
 #
 
-# Telegram Environment
-TELEGRAM_ID=${chat_id)
-TELEGRAM_TOKEN=${token)
-
-# Clone Dependencies
-git clone ${JOBS} https://github.com/Nicklas373/aosp-clang -b r370808 ${EXTRA} ${DIR_CLANG}
-git clone ${JOBS} https://github.com/fadlyas07/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu ${EXTRA} ${DIR_GCC}
-git clone ${JOBS} https://github.com/fadlyas07/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabi ${EXTRA} ${DIR_GCC32}
-git clone ${JOBS} https://github.com/Mhmmdfas/anykernel3 -b ${CODENAME} ${EXTRA} ${ZIP_DIR}
-
-# Main Environment
-KERNEL_NAME="GREENFORCE"
-KERNEL_TYPE="CAF"
+#Main Environment
+NUM=$(echo $CIRCLE_BUILD_NUM | cut -c 1-2)
+TANGGAL=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
+IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
+DEV="https://t.me/Mhmmdfas"
+STICKER="CAADBQADPwEAAn1Cwy4LGnCzWtePdRYE"
+NAME="GREENFORCE"
 CODENAME="rolex"
 CONFIG="rolex_defconfig"
+TYPE="CAF"
+BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+COMMIT="$(git log --pretty=format:'"%h : %s"' -1)"
+
+#Toolchains Option
+ZIPDIR="anykernel3"
+FCLANG="clang"
+FGCC="aarch64"
+FARM="arm32"
 JOBS="-j50"
 LOAD="-l60"
 EXTRA="--depth=1"
-STICK="CAADBQADPwEAAn1Cwy4LGnCzWtePdRYE"
-CI=$(echo $CIRCLE_BUILD_NUM | cut -c 1-2)
-TGL=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
-IMG=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
-HEAD="$(git rev-parse --abbrev-ref HEAD)"
-# Credits to @Nicklas373
-POINT="$(git --no-pager log --pretty=format:'"%h - %s (%an)"' -1)"
 
-# Toolchains Directory
-ZIP_DIR="anykernel3"
-DIR_CLANG="clang"
-DIR_GCC="aarch64"
-DIR_GCC32="arm32"
+#Material's of GREENFORCE kernel
+ZIPLINK="https://github.com/Mhmmdfas/anykernel3"
+CLANGLINK="https://github.com/Nicklas373/aosp-clang"
+GCC64="https://github.com/fadlyas07/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu"
+GCC32="https://github.com/fadlyas07/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabi"
+HEAD_CLANG="r370808"
 
-# Export
+#Prefixx Toolchains
+TC_CLANG="clang"
+TC_GCC64="aarch64-linux-gnu-"
+TC_GCC32="arm-linux-gnueabi-"
+
+#Clone The Material's
+git clone ${JOBS} ${CLANGLINK} -b ${HEAD_CLANG} ${EXTRA} ${FCLANG}
+git clone ${JOBS} ${GCC64} ${EXTRA} ${FGCC}
+git clone ${JOBS} ${GCC32} ${EXTRA} ${FARM}
+git clone ${JOBS} ${ZIPLINK} -b ${CODENAME} ${EXTRA} ${ZIPDIR}
+
+#Compile Side
+CT="$(pwd)/${FCLANG}/bin/${TC_CLANG}"
+GCC_64="$(pwd)/${FGCC}/bin/${TC_GCC64}"
+GCC_32="$(pwd)/${FARM}/bin/${TC_GCC32}"
+
+#Export Side
+DEV_ID="784548477"
 export ARCH=arm64
 export KBUILD_BUILD_USER=Mhmmdfadlyas
 export KBUILD_BUILD_HOST=AliansiNolep
 export USE_CCACHE=1
 export CACHE_DIR=~/.ccache
-CT="$(pwd)/${DIR_CLANG}/bin/${DIR_CLANG}"
-GCC_64="$(pwd)/${DIR_GCC}/bin/aarch64-linux-gnu-"
-GCC_32="$(pwd)/${DIR_GCC32}/bin/arm-linux-gnueabi-"
-
-export TZ="Asia/Jakarta date"
-
+START=$(date +"%s")
 #Build starts here
 # =================
 echo -e "> Opening .config file...\n"
 # Take error log
 function logerr() {
     cat build.log | curl -F 'sprunge=<-' http://sprunge.us > link
-    ERROR_LOG="$(cat link)"
+    LOGERR="$(cat link)"
 }
 # send sticker
 function sticker() {
         curl -s -X POST "https://api.telegram.org/bot${token}/sendSticker" \
-                        -d sticker="${STICK}" \
-                        -d chat_id=${TELEGRAM_ID}
+                        -d sticker="${STICKER}" \
+                        -d chat_id=${chat_id}
 }
 # Send status
 function sendinfo() {
-        curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
-                        -d chat_id=${TELEGRAM_ID} \
+        curl -s -X POST "https://api.telegram.org/bot${token}/sendMessage" \
+                        -d chat_id=${chat_id} \
                         -d "disable_web_page_preview=true" \
                         -d "parse_mode=html" \
-                        -d text="<b>${KERNEL_NAME} ${KERNEL_TYPE} kernel new build is up</b>!!%0AFrom branch: <code>${HEAD}</code> %0ALatest Commit <code>${POINT}</code>%0AClang: <code>$(${CT} --version | head -n 1 | perl -pe 's/\(.*?\)//gs' | sed -e 's/  */ /g')</code>%0ACompiled with: <code>$(${GCC_64}gcc --version | head -n 1)</code>%0ACompiled with: <code>$(${GCC_32}gcc --version | head -n 1)</code>%0AStarted on: <code>$(TZ=Asia/Jakarta date)</code>"
+                        -d text="<b>${NAME} ${TYPE} kernel new build is up</b>!!%0AFrom branch: <code>${BRANCH}</code> %0ALatest Commit <code>${COMMIT}</code>%0AClang: <code>$(${CT} --version | head -n 1 | perl -pe 's/\(.*?\)//gs' | sed -e 's/  */ /g')</code>%0ACompiled with: <code>$(${GCC_64}gcc --version | head -n 1)</code>%0ACompiled with: <code>$(${GCC_32}gcc --version | head -n 1)</code>%0AStarted on: <code>$(TZ=Asia/Jakarta date)</code>"
 }
 # Send private status
 function sendpriv() {
-        curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
-                        -d chat_id=${ID} \
+        curl -s -X POST "https://api.telegram.org/bot${token}/sendMessage" \
+                        -d chat_id=${DEV_ID} \
                         -d "disable_web_page_preview=true" \
                         -d "parse_mode=html" \
-                        -d text="${NAME} new build for ${CODENAME}!%0A😎: <a href='${DEV}'>Mhmmdfas</a> %0A📱: <code>Xiaomi Redmi 4A</code> %0A⏰: <code>$(TZ=Asia/Jakarta date)</code> %0A📑: <code>${POINT}</code> %0A🖇️: <a href='${CIRCLE_BUILD_URL}'>here</a> | #${CI}."
+                        -d text="${NAME} new build for ${CODENAME}!%0A😎: <a href='${DEV}'>Mhmmdfas</a> %0A📱: <code>Xiaomi Redmi 4A</code> %0A⏰: <code>$(TZ=Asia/Jakarta date)</code> %0A📑: <code>${COMMIT}</code> %0A🖇️: <a href='${CIRCLE_BUILD_URL}'>here</a> | #${NUM}."
 }
 # Push Kernel
 function push() {
-        cd ${ZIP_DIR}
+        cd ${ZIPDIR}
 	ZIP=$(echo *.zip)
-	curl -F document=@$ZIP "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendDocument" \
-			-F chat_id="${TELEGRAM_ID}" \
+	curl -F document=@$ZIP "https://api.telegram.org/bot${token}/sendDocument" \
+			-F chat_id="${chat_id}" \
 			-F "disable_web_page_preview=true" \
 			-F "parse_mode=html" \
 			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). <b>For Xiaomi Redmi 4A</b> [ <code>$UTS</code> ]"
 }
 # Push Kernel into my telegram
 function testprivv() {
-        cd ${ZIP_DIR}
+        cd ${ZIPDIR}
 	ZIP=$(echo *.zip)
-	curl -F document=@$ZIP "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendDocument" \
-			-F chat_id=${ID} \
+	curl -F document=@$ZIP "https://api.telegram.org/bot${token}/sendDocument" \
+			-F chat_id=${DEV_ID} \
 			-F "disable_web_page_preview=true" \
 			-F "parse_mode=html" \
-			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). <b>For Xiaomi Redmi 4A</b> [ <code>$UTS</code> ] ${NAME}@${HOST}"
+			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). <b>For Xiaomi Redmi 4A</b> [ <code>$UTS</code> ]"
 }
 # Fin Error
 function finerr() {
         logerr
         paste
-        curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
-			-d chat_id="${TELEGRAM_ID}" \
+        curl -s -X POST "https://api.telegram.org/bot${token}/sendMessage" \
+			-d chat_id="${chat_id}" \
 			-d "disable_web_page_preview=true" \
 			-d "parse_mode=markdown" \
-			-d text="BUILD DONE WITH ERROR(S).%0A📱: Xiaomi Redmi 4A %0A🖇️: ${ERROR_LOG} \
+			-d text="BUILD DONE WITH ERROR(S).%0A📱: Xiaomi Redmi 4A %0A🖇️: ${LOGERR}%0AOK! GOOD LUCK 😁" \
 			                echo "push log into my telegram account"
-       curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
-            -d chat_id=${ID} \
+       curl -s -X POST "https://api.telegram.org/bot${token}/sendMessage" \
+            -d chat_id=${DEV_ID} \
 			-d "disable_web_page_preview=true" \
             -d "parse_mode=markdown" \
-            -d text="BUILD DONE WITH ERROR(S).%0A📱: Xiaomi Redmi 4A %0A🖇️: ${ERROR_LOG}"
+            -d text="BUILD DONE WITH ERROR(S).%0A📱: Xiaomi Redmi 4A %0A🖇️: ${LOGERR}%0AOK! GOOD LUCK 😁"
         exit 1
 }
 # Compile kernel
 function compile() {
-        START=$(date +"%s")
         make -s -C $(pwd) O=out ${CONFIG}
         make -s -C $(pwd) CC=${CT} \
 			  CROSS_COMPILE=${GCC_64} \
                           CROSS_COMPILE_ARM32=${GCC_32} \
                           O=out ${JOBS} ${LOAD} 2>&1| tee build.log
         UTS=$(cat out/include/generated/compile.h | grep UTS_VERSION | cut -d '"' -f2)
-        NAME=$(cat ${KERNEL}/out/include/generated/compile.h | grep LINUX_COMPILE_BY | cut -d '"' -f2)
-        HOST=$(cat ${KERNEL}/out/include/generated/compile.h | grep LINUX_COMPILE_HOST | cut -d '"' -f2)
-            if ! [ -a $IMG ]; then
+            if ! [ -a $IMAGE ]; then
                 finerr
                 exit 1
             fi
-        cp out/arch/arm64/boot/Image.gz-dtb ${ZIP_DIR}/zImage
+        cp out/arch/arm64/boot/Image.gz-dtb ${ZIPDIR}/zImage
         logerr
         paste
 }
-# Making kernel zip
+# Zipping
 function zipping() {
-    cd ${ZIP_DIR} || exit 1
-    zip -r9 ${KERNEL_NAME}-${KERNEL_TYPE}-${CODENAME}-${TGL}.zip * -x .git README.md
-    cd
+    cd ${ZIPDIR} || exit 1
+    zip -r9 ${NAME}-${TYPE}-${CODENAME}-${TANGGAL}.zip * -x .git README.md
+    cd ...
 }
 rm -rf out
 sticker
