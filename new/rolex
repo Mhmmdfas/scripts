@@ -130,8 +130,8 @@ function compile() {
                           CROSS_COMPILE_ARM32=${GCC_32} \
                           O=out ${JOBS} ${LOAD} 2>&1| tee build.log
         UTS=$(cat out/include/generated/compile.h | grep UTS_VERSION | cut -d '"' -f2)
-	NAME=$(cat out/include/generated/compile.h | grep LINUX_COMPILE_BY | cut -d '"' -f2)
-	HOST=$(cat out/include/generated/compile.h | grep LINUX_COMPILE_HOST | cut -d '"' -f2)
+	LINUX_NAME=$(cat out/include/generated/compile.h | grep LINUX_COMPILE_BY | cut -d '"' -f2)
+	LINUX_HOST=$(cat out/include/generated/compile.h | grep LINUX_COMPILE_HOST | cut -d '"' -f2)
             if ! [ -a $IMAGE ]; then
                 finerr
                 exit 1
