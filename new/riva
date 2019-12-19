@@ -88,7 +88,7 @@ function testprivv() {
 			-F chat_id=${DEV_ID} \
 			-F "disable_web_page_preview=true" \
 			-F "parse_mode=html" \
-			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). <b>For Xiaomi Redmi 5A</b> [ <code>$UTS</code> ] $NAME@$HOST"
+			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). <b>For Xiaomi Redmi 5A</b> [ <code>$UTS</code> ] $LINUX_NAME@$LINUX_HOST"
 }
 # Fin Error
 function finerr() {
@@ -115,8 +115,8 @@ function compile() {
 			  CROSS_COMPILE=${GCC_64} \
                           CROSS_COMPILE_ARM32=${GCC_32} \
                           O=out ${JOBS} ${LOAD} 2>&1| tee build.log
-	HOST=$(cat out/include/generated/compile.h | grep LINUX_COMPILE_HOST | cut -d '"' -f2)
-	NAME=$(cat out/include/generated/compile.h | grep LINUX_COMPILE_BY | cut -d '"' -f2)
+	LINUX_HOST=$(cat out/include/generated/compile.h | grep LINUX_COMPILE_HOST | cut -d '"' -f2)
+	LINUX_NAME=$(cat out/include/generated/compile.h | grep LINUX_COMPILE_BY | cut -d '"' -f2)
         UTS=$(cat out/include/generated/compile.h | grep UTS_VERSION | cut -d '"' -f2)
             if ! [ -a $IMAGE ]; then
                 finerr
