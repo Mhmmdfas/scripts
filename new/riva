@@ -13,7 +13,7 @@ CODENAME="riva"
 CONFIG="riva_defconfig"
 TYPE="CAF"
 #Credits to @Nicklas373
-COMMIT="$(git --no-pager log --pretty=format:'"%h - %s by %an"' -1)"
+COMMIT="$(git --no-pager log --pretty=format:'"%h - %s by <b>%an</b>"' -1)"
 
 #Toolchains Option
 ZIPDIR="anykernel3"
