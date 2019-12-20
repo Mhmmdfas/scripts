@@ -1,6 +1,7 @@
 #!bin/bash
-
-#Main Environment
+# Please no!
+#
+# Main Environment
 NUM=$(echo $CIRCLE_BUILD_NUM | cut -c 1-2)
 TANGGAL=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
@@ -11,10 +12,10 @@ CODENAME="rolex"
 CONFIG="rolex_defconfig"
 TYPE="CAF"
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-# Credits to @Nicklas373
+# Credits to @Nicklas373 >> for aowkwk
 COMMIT="$(git --no-pager log --pretty=format:'"%h: %s by %an"' -1)"
 
-#Toolchains Option
+# Toolchains anu
 ZIPDIR="anykernel3"
 FCLANG="clang"
 FGCC="aarch64"
@@ -23,30 +24,29 @@ JOBS="-j50"
 LOAD="-l60"
 EXTRA="--depth=1"
 
-#Material's of GREENFORCE kernel
+# Link of toolchains,anykernel,and branch
 ZIPLINK="https://github.com/Mhmmdfas/anykernel3"
 CLANGLINK="https://github.com/Nicklas373/aosp-clang"
 GCC64="https://github.com/fadlyas07/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu"
 GCC32="https://github.com/fadlyas07/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabi"
 HEAD_CLANG="r370808"
 
-#Prefixx Toolchains
-TC_CLANG="clang"
+# Prefixx Toolchains
 TC_GCC64="aarch64-linux-gnu-"
 TC_GCC32="arm-linux-gnueabi-"
 
-#Clone The Material's
+# Clone Dependencies
 git clone ${JOBS} ${CLANGLINK} -b ${HEAD_CLANG} ${EXTRA} ${FCLANG}
 git clone ${JOBS} ${GCC64} ${EXTRA} ${FGCC}
 git clone ${JOBS} ${GCC32} ${EXTRA} ${FARM}
 git clone ${JOBS} ${ZIPLINK} -b ${CODENAME} ${EXTRA} ${ZIPDIR}
 
-#Compile Side
-CT="$(pwd)/${FCLANG}/bin/${TC_CLANG}"
+# Export Compiler
+CT="$(pwd)/${FCLANG}/bin/${FCLANG}"
 GCC_64="$(pwd)/${FGCC}/bin/${TC_GCC64}"
 GCC_32="$(pwd)/${FARM}/bin/${TC_GCC32}"
 
-#Export Side
+# Export Environment
 DEV_ID="784548477"
 export ARCH=arm64
 export KBUILD_BUILD_USER=Mhmmdfadlyas
@@ -57,18 +57,18 @@ START=$(date +"%s")
 #Build starts here
 # =================
 echo -e "> Opening .config file...\n"
-# Take error log
+# Take log error from kernel
 function logerr() {
     cat build.log | curl -F 'sprunge=<-' http://sprunge.us > link
     LOGERR="$(cat link)"
 }
-# send sticker
+# send sticker to channel
 function sticker() {
         curl -s -X POST "https://api.telegram.org/bot${token}/sendSticker" \
                         -d sticker="${STICKER}" \
                         -d chat_id=${chat_id}
 }
-# Send status
+# Send status to channel
 function sendinfo() {
         curl -s -X POST "https://api.telegram.org/bot${token}/sendMessage" \
                         -d chat_id=${chat_id} \
@@ -76,7 +76,7 @@ function sendinfo() {
                         -d "parse_mode=html" \
                         -d text="<b>${NAME} ${TYPE} kernel new build is up</b>!!%0AFrom branch: <code>${BRANCH}</code> %0ALatest Commit <code>${COMMIT}</code>%0AClang: <code>$(${CT} --version | head -n 1 | perl -pe 's/\(.*?\)//gs' | sed -e 's/  */ /g')</code>%0ACompiled with: <code>$(${GCC_64}gcc --version | head -n 1)</code>%0ACompiled with: <code>$(${GCC_32}gcc --version | head -n 1)</code>%0AStartedw on: <code>$(TZ=Asia/Jakarta date)</code>"
 }
-# Send private status
+# Send status to private chat
 function sendpriv() {
         curl -s -X POST "https://api.telegram.org/bot${token}/sendMessage" \
                         -d chat_id=${DEV_ID} \
@@ -84,7 +84,7 @@ function sendpriv() {
                         -d "parse_mode=html" \
                         -d text="${NAME} new build for ${CODENAME}!%0A😎: <a href='${DEV}'>Mhmmdfas</a> %0A📱: <code>Xiaomi Redmi 4A</code> %0A⏰: <code>$(TZ=Asia/Jakarta date)</code> %0A📑: <code>${COMMIT}</code> %0A🖇️: <a href='${CIRCLE_BUILD_URL}'>here</a> | #${NUM}."
 }
-# Push Kernel
+# Push Kernel to channel
 function push() {
         cd ${ZIPDIR}
 	ZIP=$(echo *.zip)
@@ -92,9 +92,9 @@ function push() {
 			-F chat_id="${chat_id}" \
 			-F "disable_web_page_preview=true" \
 			-F "parse_mode=html" \
-			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). <b>For Xiaomi Redmi 4A</b> [ <code>$UTS</code> ]"
+			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). <b>For Xiaomi Redmi 4A</b> [ <code>$LINUX_UTS</code> ]"
 }
-# Push Kernel into my telegram
+# Push Kernel to private chat
 function testprivv() {
         cd ${ZIPDIR}
 	ZIP=$(echo *.zip)
@@ -102,9 +102,9 @@ function testprivv() {
 			-F chat_id=${DEV_ID} \
 			-F "disable_web_page_preview=true" \
 			-F "parse_mode=html" \
-			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). <b>For Xiaomi Redmi 4A</b> [ <code>$UTS</code> ]"
+			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). <b>For Xiaomi Redmi 4A</b> [ <code>$LINUX_UTS</code> ] $LINUX_NAME@$LINUX_HOST"
 }
-# Fin Error
+# Find Error 
 function finerr() {
         logerr
         paste
@@ -113,7 +113,8 @@ function finerr() {
 			-d "disable_web_page_preview=true" \
 			-d "parse_mode=markdown" \
 			-d text="BUILD DONE WITH ERROR(S).%0A📱: Xiaomi Redmi 4A %0A🖇️: ${LOGERR}%0AOK! GOOD LUCK 😁" \
-			                echo "push log into my telegram account"
+# Send error to private chat
+   echo "push log into my telegram account"
        curl -s -X POST "https://api.telegram.org/bot${token}/sendMessage" \
             -d chat_id=${DEV_ID} \
 			-d "disable_web_page_preview=true" \
@@ -121,15 +122,15 @@ function finerr() {
             -d text="BUILD DONE WITH ERROR(S).%0A📱: Xiaomi Redmi 4A %0A🖇️: ${LOGERR}%0AOK! GOOD LUCK 😁"
         exit 1
 }
-# Compile kernel
-# Credits to @Nicklas373
+# Compile greenforce
 function compile() {
         make -s -C $(pwd) O=out ${CONFIG}
         make -s -C $(pwd) CC=${CT} \
 			  CROSS_COMPILE=${GCC_64} \
                           CROSS_COMPILE_ARM32=${GCC_32} \
                           O=out ${JOBS} ${LOAD} 2>&1| tee build.log
-        UTS=$(cat out/include/generated/compile.h | grep UTS_VERSION | cut -d '"' -f2)
+# Credit to @rama982 & @Nicklas373 for >> aowwkwk
+        LINUX_UTS=$(cat out/include/generated/compile.h | grep UTS_VERSION | cut -d '"' -f2)
 	LINUX_NAME=$(cat out/include/generated/compile.h | grep LINUX_COMPILE_BY | cut -d '"' -f2)
 	LINUX_HOST=$(cat out/include/generated/compile.h | grep LINUX_COMPILE_HOST | cut -d '"' -f2)
             if ! [ -a $IMAGE ]; then
@@ -140,11 +141,11 @@ function compile() {
         logerr
         paste
 }
-# Zipping
+# Make zip
 function zipping() {
     cd ${ZIPDIR} || exit 1
     zip -r9 ${NAME}-${TYPE}-${CODENAME}-${TANGGAL}.zip * -x .git README.md
-    cd ...
+    cd ... #hahayes
 }
 rm -rf out
 sticker
@@ -156,4 +157,5 @@ END=$(date +"%s")
 DIFF=$(($END - $START))
 testprivv
 push
+# hahayes
 # End build
