@@ -53,6 +53,7 @@ export KBUILD_BUILD_USER=Mhmmdfadlyas
 export KBUILD_BUILD_HOST=AliansiNolep
 export USE_CCACHE=1
 export CACHE_DIR=~/.ccache
+export KBUILD_COMPILER_STRING="$($(pwd)/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
 START=$(date +"%s")
 #Build starts here
 # =================
