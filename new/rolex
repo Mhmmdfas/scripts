@@ -49,8 +49,8 @@ GCC_32="$(pwd)/${FARM}/bin/${TC_GCC32}"
 #Export Side
 DEV_ID="784548477"
 export ARCH=arm64
-export KBUILD_BUILD_USER=Sad-Song-Story
-export KBUILD_BUILD_HOST=Aliansi-Nolep
+export KBUILD_BUILD_USER=Mhmmdfadlyas
+export KBUILD_BUILD_HOST=kernel.lnx.3.18.r34-rel
 export USE_CCACHE=1
 export CACHE_DIR=~/.ccache
 export KBUILD_COMPILER_STRING="$($(pwd)/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
