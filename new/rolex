@@ -6,7 +6,7 @@ ZIP_DIR="anykernel3"
 IMG=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 CODENAME="rolex"
 CONFIG="rolex_defconfig"
-CLANG="clang"
+CLANG_DIR="clang"
 GCC64_DIR="aarch64"
 GCC32_DIR="arm32"
 HEAD="$(git rev-parse --abbrev-ref HEAD)"
@@ -34,17 +34,18 @@ GCC_URL="https://github.com/fadlyas07/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-li
 ARM_URL="https://github.com/fadlyas07/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabi"
 HEAD_CC="r370808"
 # Prefixx Toolchains
+CLANG="clang"
 GCC64="aarch64-linux-gnu-"
 GCC32="arm-linux-gnueabi-"
 
 # Clone Dependencies
-git clone ${JOBS} ${CC_URL} -b ${HEAD_CLANG} ${EXTRA} ${CLANG}
+git clone ${JOBS} ${CC_URL} -b ${HEAD_CLANG} ${EXTRA} ${CLANG_DIR}
 git clone ${JOBS} ${GCC_URL} ${EXTRA} ${GCC64_DIR}
 git clone ${JOBS} ${ARM_URL} ${EXTRA} ${GCC32_DIR}
 git clone ${JOBS} ${ZIP_URL} -b ${CODENAME} ${EXTRA} ${ZIP_DIR}
 
 # Export Compiler
-CT="$(pwd)/${CLANG}/bin/${CLANG}"
+CT="$(pwd)/${CLANG_DIR}/bin/${CLANG}"
 GCC_64="$(pwd)/${GCC64_DIR}/bin/${GCC64}"
 GCC_32="$(pwd)/${GCC32_DIR}/bin/${GCC32}"
 # Export Environment
