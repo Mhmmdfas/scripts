@@ -74,7 +74,7 @@ function sendinfo() {
                         -d chat_id=${chat_id} \
                         -d "disable_web_page_preview=true" \
                         -d "parse_mode=html" \
-                        -d text="<b>${NAME} ${TYPE} kernel new build is up</b>!!%0AFrom branch: <code>${BRANCH}</code> %0ALatest Commit <code>${COMMIT}</code>%0AClang: <code>$(${CT} --version | head -n 1 | perl -pe 's/\(.*?\)//gs'`\")</code>%0ACompiled with: <code>$(${GCC_64}gcc --version | head -n 1)</code>%0ACompiled with: <code>$(${GCC_32}gcc --version | head -n 1)</code>%0AStarted on: <code>$(TZ=Asia/Jakarta date)</code>"
+                        -d text="<b>${NAME} ${TYPE} kernel new build is up</b>!!%0AFrom branch: <code>${BRANCH}</code> %0ALatest Commit <code>${COMMIT}</code>%0AClang: <code>$(${CT} --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/ */ /g')</code>%0ACompiled with: <code>$(${GCC_64}gcc --version | head -n 1)</code>%0ACompiled with: <code>$(${GCC_32}gcc --version | head -n 1)</code>%0AStarted on: <code>$(TZ=Asia/Jakarta date)</code>"
 }
 # Send private status
 function sendpriv() {
