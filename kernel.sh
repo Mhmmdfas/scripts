@@ -3,6 +3,7 @@
 # Copyright (C) 2019 Raphielscape LLC (@raphielscape)
 # Copyright (C) 2019 Dicky Herlambang (@Nicklas373)
 # Copyright (C) 2020 Muhammad Fadlyas (@fadlyas07)
+build_start=$(date +"%s")
 export parse_branch=$(git rev-parse --abbrev-ref HEAD)
 if [[ $parse_branch == "lavender" ]]; then
     export device="Xiaomi Redmi Note 7/7S"
@@ -19,6 +20,7 @@ if [ $parse_branch == "aosp/gcc-lto" ]; then
 elif [[ $parse_branch == "HMP-vdso32" ]]; then
     git clone --depth=1 --single-branch https://github.com/HANA-CI-Build-Project/proton-clang -b master clang
 else
+    git clone --depth=1 --single-branch https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-6364210 clang
     git clone --depth=1 --single-branch https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r55 gcc32
     git clone --depth=1 --single-branch https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r55 gcc
 fi
@@ -34,7 +36,6 @@ export product_name=GreenForce
 export KBUILD_BUILD_HOST=$(whoami)
 export KBUILD_BUILD_USER=Mhmmdfadlyas
 export kernel_img=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
-build_start=$(date +"%s")
 
 tg_sendstick() {
    curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker" \
@@ -70,7 +71,7 @@ if [ $parse_branch == "aosp/gcc-lto" ]; then
 elif [[ $parse_branch == "HMP-vdso32" ]]; then
     tg_build() {
       export LD_LIBRARY_PATH=$(pwd)/clang/bin/../lib:$PATH 
-      PATH=$(pwd)/clang/bin:$(pwd)/clang/bin:$PATH \$PATH \
+      PATH=$(pwd)/clang/bin:$PATH \
       make -j$(nproc --all) O=out \
 		            ARCH=arm64 \
 		            CC=clang \
@@ -80,9 +81,11 @@ elif [[ $parse_branch == "HMP-vdso32" ]]; then
     }
 else
     tg_build() {
-      PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH \
+      PATH=$(pwd)/clang/bin:$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH \
       make -j$(nproc --all) O=out \
 		            ARCH=arm64 \
+                            CC=clang \
+                            CLANG_TRIPLE=aarch64-linux-gnu- \
 		            CROSS_COMPILE=aarch64-linux-android- \
 		            CROSS_COMPILE_ARM32=arm-linux-androideabi-
     }
