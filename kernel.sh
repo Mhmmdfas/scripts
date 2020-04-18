@@ -80,6 +80,7 @@ elif [[ $parse_branch == "HMP-vdso32" ]]; then
     }
 else
     tg_build() {
+      PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH \
       make -j$(nproc --all) O=out \
 		            ARCH=arm64 \
 		            CROSS_COMPILE=aarch64-linux-android- \
