@@ -6,7 +6,6 @@
 export parse_branch=$(git rev-parse --abbrev-ref HEAD)
 export device="Xiaomi Redmi 4A"
 export config_device=rolex_defconfig
-git clone --depth=1 --single-branch https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-9.0.0_r55 gcc32
 git clone --depth=1 --single-branch https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-9.0.0_r55 gcc
 git clone --depth=1 --single-branch https://github.com/fabianonline/telegram.sh telegram
 git clone --depth=1 --single-branch https://github.com/fadlyas07/anykernel-3
@@ -37,11 +36,10 @@ tg_channelcast() {
 	)"
 }
 tg_build() {
-PATH=$(pwd)/gcc/bin:$(pwd)/gcc32/bin:$PATH \
+PATH=$(pwd)/gcc/bin:$PATH \
 make -j$(nproc) O=out \
                 ARCH=arm64 \
-                CROSS_COMPILE=aarch64-linux-android- \
-                CROSS_COMPILE_ARM32=arm-linux-androideabi-
+                CROSS_COMPILE=aarch64-linux-android-
 }
 date=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 make ARCH=arm64 O=out "$config_device1" && \
