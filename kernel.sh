@@ -42,7 +42,7 @@ make -j$(nproc) O=out \
                 CROSS_COMPILE=aarch64-linux-android-
 }
 date=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
-make ARCH=arm64 O=out "$config_device1" && \
+make ARCH=arm64 O=out "$config_device" && \
 tg_build 2>&1| tee $(TZ=Asia/Jakarta date +'%A-%H%M-%d%m%y').log
 mv *.log $TEMP
 if ! [[ -f "$kernel_img" ]]; then
